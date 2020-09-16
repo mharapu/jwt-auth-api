@@ -1,6 +1,6 @@
 pipeline {
     agent {
-            docker { image 'node:14-alpine' }
+            docker { image 'maven:3-alpine' }
         }
     options {
         skipDefaultCheckout()
