@@ -28,8 +28,8 @@ pipeline {
         stage ('Release deploy') {
             when { branch 'release'}
             environment {
-            				TAG = """${sh(
-            				        returnStdout:true, script: """
+            				TAG = sh
+            				        returnStdout:true, script: '''
             						git fetch --tags
                                     tag=`git for-each-ref --count=1 --sort=-taggerdate --format '%(refname:strip=2)' refs/tags`
                                     if [[ "$tag" == "" ]]
@@ -43,7 +43,8 @@ pipeline {
                                         tag=${tagArr[0]}'.'${tagArr[1]}'.'$newVersion
                                     fi
                                     echo $tag
-            				""")}"""
+                                    '''
+
             }
             steps {
                 script {
