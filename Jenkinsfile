@@ -12,8 +12,14 @@ pipeline {
 		                git( url: "https://github.com/mharapu/jwt-auth-api.git",
 		                    branch: "release"
 		                  )
-	                    def tag = sh(returnStdout: true, script: "git for-each-ref --count=1 --sort=-taggerdate --format '%(tag)' refs/tags")
-	                    echo tag
+	                    def tag = sh(returnStdout: true, script: "git for-each-ref --count=1 --sort=-taggerdate --format '%(refname:strip=2)' refs/tags")
+	                    if [[ "$tag" == "" ]]
+	                    then
+	                        tag = "V0.0.1"
+	                    else
+	                        def tagArr = ( $(IFS="." echo "$tag") )
+	                        tag = $tagArr[0]tagArr[1](tagArr[2]++)
+	                    endif
 	                }
                 }
                 sh '''
