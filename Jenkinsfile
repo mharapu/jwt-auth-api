@@ -9,10 +9,10 @@ pipeline {
     }
     stages {
         stage ('Initialize') {
-            git branch: 'master',
-                credentialsId: 'github',
-                url: 'https://github.com/mharapu/jwt-auth-api.git'
             steps {
+                git branch: 'master',
+                    credentialsId: 'github',
+                    url: 'https://github.com/mharapu/jwt-auth-api.git'
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
