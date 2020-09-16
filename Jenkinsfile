@@ -9,7 +9,7 @@ pipeline {
         stage ('Initialize') {
             steps {
                 sh '''
-                    echo "PATH = ${PATH}:c/Program Files/Docker Toolbox"
+                    echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
                 '''
             }
