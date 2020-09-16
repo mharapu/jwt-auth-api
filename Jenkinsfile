@@ -17,7 +17,7 @@ pipeline {
 			steps {
 				checkout scm
 				script {
-					docker.withRegistry('https://mirceah.jfrog.io/jwt-auth', 'artifactory-id') {
+					docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
 	                    def image = docker.build("jwt-auth-api:${env.BUILD_ID}")
 	                    image.push()
 	                }
