@@ -52,19 +52,18 @@ pipeline {
             }
             steps {
                 script {
-                    sshagent (credentials: ['github-ssh']) {
                         sh """
 	                        git tag ${TAG}
 	                        sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
 	                        mv pom.xml.new pom.xml
 	                        git commit -a -m "Set version to ${TAG}"
-	                        git push --set-upstream origin ${TAG}
-	                        git push --set-upstream origin release
+	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git ${TAG}
+	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git release
 	                        git checkout master
-	                        git merge origin/release
-	                        git push --set-upstream origin master
+	                        git merge https://github.com/mharapu/jwt-auth-api.git/release
+	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git master
                         """
-					}
+
                     docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
                                             def image = docker.build("jwt-auth-api:${TAG}")
                                             image.push()
