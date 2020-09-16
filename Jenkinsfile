@@ -48,7 +48,7 @@ pipeline {
                 script {
                         sh """
 	                        git tag ${TAG}
-	                        sed -e "10,//{s/<version>.*<\/version>/<version>${TAG}<\/version>/;}" pom.xml > pom.xml.new
+	                        sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
 	                        mv pom.xml.new pom.xml
 	                        git commit -a -m "Set version to ${TAG}"
 	                        git push origin ${TAG}
