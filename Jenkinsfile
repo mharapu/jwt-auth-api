@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-		checkout scm
-        docker.withRegistry('https://mirceah.jfrog.io/jwt-auth', 'artifactory-id') {
-            def image = docker.build("jwt-auth-api:${env.BUILD_ID}")
-            image.push()
-        }
-    }
+    agent any
     tools {
         maven 'maven'
         jdk 'jdk8'
@@ -19,6 +13,17 @@ pipeline {
                 '''
             }
         }
+		stage ('Dockerize') {
+			steps {
+				checkout scm
+				script {
+					docker.withRegistry('mirceah.jfrog.io/jwt-auth', 'artifactory-id') {
+	                    def image = docker.build("jwt-auth-api:${env.BUILD_ID}")
+	                    image.push()
+	                }
+				}
+        	}
+		}
         stage ('Build') {
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true package'
