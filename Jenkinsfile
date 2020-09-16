@@ -8,10 +8,10 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
+                sh 'echo "${env.TAG_NAME}"'
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                    echo "${env.TAG_NAME}"
                 '''
             }
         }
