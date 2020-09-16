@@ -47,6 +47,8 @@ pipeline {
             steps {
                 script {
                         sh """
+                            git config --global user.email "deploy@mirceah"
+                            git config --global user.name "Deploy System"
 	                        git tag ${TAG}
 	                        sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
 	                        mv pom.xml.new pom.xml
