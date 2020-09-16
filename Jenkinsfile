@@ -53,17 +53,15 @@ pipeline {
             steps {
                 script {
                         sh """
-                            git config --global user.email "deploy@mirceah"
-                            git config --global user.name "Deploy System"
 	                        git tag ${TAG}
 	                        sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
 	                        mv pom.xml.new pom.xml
 	                        git commit -a -m "Set version to ${TAG}"
-	                        git push origin ${TAG}
+	                        git push --set-upstream origin ${TAG}
 	                        git push --set-upstream origin release
 	                        git checkout master
 	                        git merge origin/release
-	                        git push origin master
+	                        git push --set-upstream origin master
                         """
 
                     docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
