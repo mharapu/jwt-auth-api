@@ -13,7 +13,15 @@ pipeline {
                 '''
             }
         }
-
+		stage ('Dockerize') {
+			steps {
+				checkout scm
+                docker.withRegistry('https://mirceah.jfrog.io/jwt-auth', 'artifactory-id') {
+                    def image = docker.build("jwt-auth-api:${env.BUILD_ID}")
+                    image.push()
+                }
+        	}
+		}
         stage ('Build') {
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true package'

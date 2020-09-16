@@ -22,9 +22,9 @@ public class LoginController {
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping(path = "/login")
-    ResponseEntity login(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity<JwtResponse> login(@RequestBody AuthRequest authRequest) {
         if (!userService.authenticate(authRequest.getUsername(), authRequest.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user/password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new JwtResponse("invalid"));
         }
         final UserDetails userDetails = this.userService.getByUsername(authRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);

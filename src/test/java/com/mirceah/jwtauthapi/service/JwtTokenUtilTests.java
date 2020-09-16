@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class JwtTokenUtilTests {
+class JwtTokenUtilTests {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -43,7 +43,7 @@ public class JwtTokenUtilTests {
     void testTokenIsNotExpired() {
         Date date = jwtTokenUtil.getExpirationDateFromToken(token);
         assertTrue(new Date().before(date));
-        assertTrue(new Date().getTime() + jwtTokenUtil.JWT_TOKEN_VALIDITY + 1 > date.getTime());
+        assertTrue(new Date().getTime() + JwtTokenUtil.JWT_TOKEN_VALIDITY + 1 > date.getTime());
     }
 
     @Test
