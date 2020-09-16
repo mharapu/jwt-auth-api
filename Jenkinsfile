@@ -8,8 +8,13 @@ pipeline {
         stage ('Initialize') {
             steps {
                 script {
-                    def tag = sh(returnStdout: true, script: "git for-each-ref --count=1 --sort=-taggerdate --format '%(tag)' refs/tags")
-                    echo "Tag : $tag"
+	                dir('git-source-code') {
+		                git( url: "https://github.com/mharapu/jwt-auth-api.git",
+		                    branch: "release"
+		                  )
+	                    def tag = sh(returnStdout: true, script: "git for-each-ref --count=1 --sort=-taggerdate --format '%(tag)' refs/tags")
+	                    echo "Tag : $tag"
+	                }
                 }
                 sh '''
                     echo "PATH = ${PATH}"
