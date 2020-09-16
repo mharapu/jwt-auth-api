@@ -1,11 +1,17 @@
 pipeline {
     agent any
+    options {
+        skipDefaultCheckout()
+    }
     tools {
         maven 'maven'
         jdk 'jdk8'
     }
     stages {
         stage ('Initialize') {
+            git branch: 'master',
+                credentialsId: 'github',
+                url: 'https://github.com/mharapu/jwt-auth-api.git'
             steps {
                 sh '''
                     echo "PATH = ${PATH}"
