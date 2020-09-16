@@ -7,7 +7,10 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
-                sh '''echo ${TAG_NAME}'''
+                script {
+                    def tag = sh(returnStdout: true, script: "git for-each-ref --count=1 --sort=-taggerdate --format '%(tag)' refs/tags")
+                    echo "Tag : $tag"
+                }
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
