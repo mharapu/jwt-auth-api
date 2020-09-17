@@ -52,7 +52,7 @@ pipeline {
                 DOCKER_LOGIN = credentials('artifactory-id')
             }
             steps {
-	            timeout(time: 60, unit: 'SECONDS') {
+	            timeout(time: 600, unit: 'SECONDS') {
 	                script {
 	                    try {
 	                            sh """
