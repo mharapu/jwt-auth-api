@@ -70,6 +70,7 @@ pipeline {
 	                        echo "Caught: ${err}"
 	                    }
 	                    sh """
+	                        docker-machine create default
 	                        docker-machine start
 	                        docker login -u ${DOCKER_LOGIN_USR} -p ${DOCKER_LOGIN_PSW} https://mirceah.jfrog.io/artifactory/jwt-auth
 	                        docker build . -t jwt-auth-api:${TAG}
