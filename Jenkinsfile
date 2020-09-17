@@ -51,7 +51,7 @@ pipeline {
                                     ''').trim()
             }
             steps {
-	            timeout(60, unit: 'SECONDS') {
+	            timeout(time: 60, unit: 'SECONDS') {
 	                script {
 	                    try {
 	                            sh """
