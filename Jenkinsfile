@@ -70,8 +70,9 @@ pipeline {
 	                        echo "Caught: ${err}"
 	                    }
 	                    sh """
-	                        docker-machine regenerate-certs -f default
-	                        docker-machine ls
+	                        docker-machine create -d virtualbox --engine-opt tlsverify=false node1
+	                        docker-machine env node1
+	                        unset DOCKER_TLS_VERIFY
 	                        docker login -u ${DOCKER_LOGIN_USR} -p ${DOCKER_LOGIN_PSW} https://mirceah.jfrog.io/artifactory/jwt-auth
 	                        docker build . -t jwt-auth-api:${TAG}
 	                        docker push jwt-auth-api:${TAG}
