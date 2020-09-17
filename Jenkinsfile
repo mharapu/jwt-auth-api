@@ -70,7 +70,7 @@ pipeline {
 	                        echo "Caught: ${err}"
 	                    }
 	                    sh """
-	                        which docker
+	                        docker-machine env box
 	                        docker login -u ${DOCKER_LOGIN_USR} -p ${DOCKER_LOGIN_PSW} https://mirceah.jfrog.io/artifactory/jwt-auth
 	                        docker build . -t jwt-auth-api:${TAG}
 	                        docker push jwt-auth-api:${TAG}
