@@ -34,21 +34,22 @@ pipeline {
         stage ('Release deploy') {
             when { branch 'release'}
             environment {
-            				TAG = sh (returnStdout:true, script: '''
-            						git fetch --tags
-                                    tag=`git for-each-ref --count=1 --sort=-taggerdate --format '%(refname:strip=2)' refs/tags`
-                                    if [[ "$tag" == "" ]]
-                                    then
-                                        tag="V0.0.1"
-                                    else
-                                        IFS="."
-                                        read -a tagArr <<< $tag
-                                        ((newVersion=${tagArr[2]}+1))
-                                        IFS=";"
-                                        tag=${tagArr[0]}'.'${tagArr[1]}'.'$newVersion
-                                    fi
-                                    echo $tag
-                                    ''').trim()
+                TAG = sh (returnStdout:true, script: '''
+                        git fetch --tags
+                        tag=`git for-each-ref --count=1 --sort=-taggerdate --format '%(refname:strip=2)' refs/tags`
+                        if [[ "$tag" == "" ]]
+                        then
+                            tag="V0.0.1"
+                        else
+                            IFS="."
+                            read -a tagArr <<< $tag
+                            ((newVersion=${tagArr[2]}+1))
+                            IFS=";"
+                            tag=${tagArr[0]}'.'${tagArr[1]}'.'$newVersion
+                        fi
+                        echo $tag
+                        ''').trim()
+                DOCKER_LOGIN = credentials('artifactory-id')
             }
             steps {
 	            timeout(time: 60, unit: 'SECONDS') {
@@ -68,10 +69,12 @@ pipeline {
 	                    } catch(err) {
 	                        echo "Caught: ${err}"
 	                    }
-	                    docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
-	                                            def image = docker.build("jwt-auth-api:${TAG}")
-	                                            image.push()
-	                                        }
+	                    sh """
+	                        docker login -u ${DOCKER_LOGIN_USR} --password-stdin https://mirceah.jfrog.io/artifactory/jwt-auth
+	                        echo ${DOCKER_LOGIN_PSW}
+	                        docker build . -t jwt-auth-api:${TAG}
+	                        docker push jwt-auth-api:${TAG}
+	                    """
 	                }
 	            }
 
