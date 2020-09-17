@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-            docker { image 'maven:3-alpine' }
-        }
+    agent any
     options {
         skipDefaultCheckout()
     }
@@ -53,24 +51,30 @@ pipeline {
                                     ''').trim()
             }
             steps {
-                script {
-                        sh """
-	                        git tag ${TAG}
-	                        sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
-	                        mv pom.xml.new pom.xml
-	                        git commit -a -m "Set version to ${TAG}"
-	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git ${TAG}
-	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git release
-	                        git checkout master
-	                        git merge https://github.com/mharapu/jwt-auth-api.git/release
-	                        git push --set-upstream https://github.com/mharapu/jwt-auth-api.git master
-                        """
+	            timeout(60, unit: 'SECONDS') {
+	                script {
+	                    try {
+	                            sh """
+	                                git tag ${TAG}
+	                                sed -e "10,//{s/<version>.*<\\/version>/<version>${TAG}<\\/version>/;}" pom.xml > pom.xml.new
+	                                mv pom.xml.new pom.xml
+	                                git commit -a -m "Set version to ${TAG}"
+	                                git push --set-upstream https://github.com/mharapu/jwt-auth-api.git ${TAG}
+	                                git push --set-upstream https://github.com/mharapu/jwt-auth-api.git release
+	                                git checkout master
+	                                git merge https://github.com/mharapu/jwt-auth-api.git/release
+	                                git push --set-upstream https://github.com/mharapu/jwt-auth-api.git master
+	                            """
+	                    } catch(err) {
+	                        echo "Caught: ${err}"
+	                    }
+	                    docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
+	                                            def image = docker.build("jwt-auth-api:${TAG}")
+	                                            image.push()
+	                                        }
+	                }
+	            }
 
-                    docker.withRegistry('https://mirceah.jfrog.io/artifactory/jwt-auth/', 'artifactory-id') {
-                                            def image = docker.build("jwt-auth-api:${TAG}")
-                                            image.push()
-                                        }
-                }
                 pushToCloudFoundry(
                                   target: 'https://api.cap.explore.suse.dev',
                                   organization: 'mircea_harapu_gmail_com',
